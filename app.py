@@ -56,9 +56,18 @@ def groq_generate(text: str) -> str:
 # -------------------------------
 def retrieve_papers(query, max_results=5):
     """Retrieve academic papers from arXiv."""
-    search = arxiv.Search(query=query, max_results=max_results)
+    
+    search = arxiv.Search(
+        query=query,
+        max_results=max_results,
+        sort_by=arxiv.SortCriterion.Relevance
+    )
+
+    client = arxiv.Client()
+
     papers = []
-    for result in search.results():
+
+    for result in client.results(search):
         paper = {
             "title": result.title,
             "summary": result.summary,
@@ -67,6 +76,7 @@ def retrieve_papers(query, max_results=5):
             "published": result.published
         }
         papers.append(paper)
+
     return papers
 
 def summarize_text(text):
